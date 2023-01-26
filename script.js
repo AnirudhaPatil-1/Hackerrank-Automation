@@ -40,10 +40,27 @@ browserPromise.then(function(browser){
     let allUrlsPromise = tab.$$(".ui-btn.ui-btn-normal.ui-btn-line-primary.interview-ch-li-cta.ui-btn-link.ui-btn-styled");
     return allUrlsPromise;
 }).then(function(data){
-    console.log(data.length);   
+    // console.log(data.length);
+    let urlFetchPromises = [];
+    let count = 0;
+    for(let i of  data){
+        if(count < 3){
+            let urlFetchPromise = tab.evaluate(function(ele){
+                return ele.getAttribute("href");
+            }, i);
+            urlFetchPromises.push(urlFetchPromise);
+        }
+        count++;
+    }  
+    return Promise.all(urlFetchPromises); 
+}).then(function(data){
+    console.log(data);
 }).then(function(){
     console.log("CODE WORKING");
 }).catch(function(err){
     console.log(`ERROR OCCURED ${err}`);
 })
 
+function solveQuestion(url){
+    
+}
