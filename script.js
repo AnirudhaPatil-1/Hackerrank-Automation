@@ -1,3 +1,4 @@
+// const { text } = require("cheerio/lib/api/manipulation");
 const pup = require("puppeteer");
 let id = "seyavor657@fandua.com";
 let pass = "seyavor657@fandua.com";
@@ -44,7 +45,7 @@ browserPromise.then(function(browser){
     let urlFetchPromises = [];
     let count = 0;
     for(let i of  data){
-        if(count < 3){
+        if(count < 4){
             let urlFetchPromise = tab.evaluate(function(ele){
                 return ele.getAttribute("href");
             }, i);
@@ -54,7 +55,17 @@ browserPromise.then(function(browser){
     }  
     return Promise.all(urlFetchPromises); 
 }).then(function(data){
-    console.log(data);
+    // console.log(data);
+    // console.log()
+    let problemSolvedPromise = solveQuestion("https://www.hackerrank.com" + data[0]);
+    for(let i = 1; i <= data.length; i++){
+        // console.log(`value of i: ${i}`)
+        problemSolvedPromise = problemSolvedPromise.then(function(){
+            return solveQuestion("https://www.hackerrank.com" + data[i]);
+        })
+
+
+    }
 }).then(function(){
     console.log("CODE WORKING");
 }).catch(function(err){
@@ -62,5 +73,40 @@ browserPromise.then(function(browser){
 })
 
 function solveQuestion(url){
+    // console.log( `url: ${url}`);
+    let problemUrl = url;
+    let editoralUrl = url.replace("?", "/editorial?");
+    return new Promise(function(resolve, reject){
+        tab.goto(editoralUrl).then(function(){
+            let languagesPromise = tab.$$(".hackdown-content h3");
+            return languagesPromise;
+        }).then(function(data){
+            let languagesPromise = [];
+            for(let i of data){
+                let languagePromise = tab.evaluate(function(ele){
+                    return ele.textContent;
+                }, i);
+                languagesPromise.push(languagePromise);
+            }
+            return Promise.all(languagesPromise);
+        }).then(function(data){
+            // console.log(data);
+            for(let i in data){
+                if(data[i] == "C++"){
+                    let finalAnswerPromise = tab.$$(".highlight").then(function(answers){
+                        let answerPromise = tab.evaluate(function(ele){
+                            return ele.textContent;
+                        }, answers[i]);
+                        return answerPromise;
+                    });
+                    return finalAnswerPromise;
+                }
+            }
+        }).then(function(data){
+            console.log(data);
+        }).then(function(){
+            resolve();
+        })
+    })
     
 }
