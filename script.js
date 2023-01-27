@@ -45,7 +45,7 @@ browserPromise.then(function(browser){
     let urlFetchPromises = [];
     let count = 0;
     for(let i of  data){
-        if(count < 4){
+        if(count < 3){
             let urlFetchPromise = tab.evaluate(function(ele){
                 return ele.getAttribute("href");
             }, i);
@@ -103,7 +103,21 @@ function solveQuestion(url){
                 }
             }
         }).then(function(data){
-            console.log(data);
+            // console.log(data);
+            return tab.goto(problemUrl).then(function(){
+                return tab.click(".monaco-editor.no-user-select .vs").then(function(){
+                    return tab.keyboard.down("Control").then(function(){
+                        return tab.keyboard.press("A").then(function(){
+                             return tab.keyboard.press("X").then(function(){
+                                return tab.keyboard.up("Control").then(function(){
+                                    return tab.type(".monaco-editor.no-user-select .vs", data);
+                                })
+                            })
+                        })
+                    })
+                })
+            })
+
         }).then(function(){
             resolve();
         })
