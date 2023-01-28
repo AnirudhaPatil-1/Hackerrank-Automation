@@ -110,22 +110,34 @@ function solveQuestion(url){
             }).then(function(){
                 let checkboxClickPromise = tab.click(".checkbox-wrap");
                 return checkboxClickPromise;
+            }).then(function(){
+                let answerTypePromise = tab.type(".input-wrap", data);
+                return answerTypePromise;
+            }).then(function(){
+                return tab.keyboard.down("Control").then(function(){
+                    return tab.keyboard.press("A").then(function(){
+                        return tab.keyboard.press("X").then(function(){
+                            return tab.keyboard.up("Control");
+                        })
+                    })
+                })
+            }).then(function(){
+                return tab.waitForSelector(".monaco-editor.no-user-select.vs", {visible: true}).then(function(){
+                    return tab.click(".monaco-editor.no-user-select.vs").then(function(){
+                        return tab.keyboard.down("Control").then(function(){
+                            return tab.keyboard.press("A").then(function(){
+                                return tab.keyboard.press("X").then(function(){
+                                    return tab.keyboard.up("Control").then(function(){
+                                        return tab.type(".monaco-editor.no-user-select.vs", data);
+                                    })
+                                })
+                            })
+                        })
+                    })
+                }) 
+            }).then(function(){
+                tab.click(".ui-btn.ui-btn-normal.ui-btn-primary.pull-right.hr-monaco-submit.ui-btn-styled");
             })
-
-                // return tab.waitForSelector(".monaco-editor.no-user-select.vs", {visible: true}).then(function(){
-                //     return tab.click(".monaco-editor.no-user-select.vs").then(function(){
-                //         return tab.keyboard.down("Control").then(function(){
-                //             return tab.keyboard.press("A").then(function(){
-                //                 return tab.keyboard.press("X").then(function(){
-                //                     return tab.keyboard.up("Control").then(function(){
-                //                         return tab.type(".monaco-editor.no-user-select.vs", data);
-                //                     })
-                //                 })
-                //             })
-                //         })
-                //     })
-                // }) 
-            // })
         }).then(function(){
             resolve();
         })
