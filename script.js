@@ -105,19 +105,27 @@ function solveQuestion(url){
         }).then(function(data){
             // console.log(data);
             return tab.goto(problemUrl).then(function(){
-                return tab.click(".monaco-editor.no-user-select .vs").then(function(){
-                    return tab.keyboard.down("Control").then(function(){
-                        return tab.keyboard.press("A").then(function(){
-                             return tab.keyboard.press("X").then(function(){
-                                return tab.keyboard.up("Control").then(function(){
-                                    return tab.type(".monaco-editor.no-user-select .vs", data);
-                                })
-                            })
-                        })
-                    })
-                })
+                let checkboxWaitPromise = tab.waitForSelector(".checkbox-wrap", {visible: true});
+                return checkboxWaitPromise;
+            }).then(function(){
+                let checkboxClickPromise = tab.click(".checkbox-wrap");
+                return checkboxClickPromise;
             })
 
+                // return tab.waitForSelector(".monaco-editor.no-user-select.vs", {visible: true}).then(function(){
+                //     return tab.click(".monaco-editor.no-user-select.vs").then(function(){
+                //         return tab.keyboard.down("Control").then(function(){
+                //             return tab.keyboard.press("A").then(function(){
+                //                 return tab.keyboard.press("X").then(function(){
+                //                     return tab.keyboard.up("Control").then(function(){
+                //                         return tab.type(".monaco-editor.no-user-select.vs", data);
+                //                     })
+                //                 })
+                //             })
+                //         })
+                //     })
+                // }) 
+            // })
         }).then(function(){
             resolve();
         })
